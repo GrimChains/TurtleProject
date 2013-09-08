@@ -1,0 +1,13 @@
+VAR bill = 1;
+VAR alice=7.5;
+VAR abcdefghijklmnopqrstuvwxyz = 0; //. testing lower case variables names
+
+//. I probably should've calculated this in whole numbers....
+FOR VAR i= 8 STEP 0.25 TO 20 DO
+BEGIN
+	bill =sin( cos(sqrt(i)) ); //. I have no idea what this computers.
+	alice = (alice + 1.5  )/9.3;
+	bill=bill-(alice* 2);
+	TURN bill;
+	JUMP alice;
+END
