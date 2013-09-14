@@ -24,8 +24,9 @@
 #define OPEN 279
 #define CLOSE 280
 #define ASSIGN 281
-
-
+#define WHILE 282
+#define IF 283
+#define FUNC 284
 
 typedef union YYSTYPE
 { int i; node *n; double d;}
