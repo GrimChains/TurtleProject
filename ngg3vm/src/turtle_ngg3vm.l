@@ -22,7 +22,18 @@ END             return CCLOSE;
 
 WHILE		return WHILE;
 IF		return IF;
-FUNC		return FUNC;
+ELSE		return ELSE;
+THEN		return THEN;
+\{		return OCURLY;
+\}		return CCURLY;
+\!\=		return NOTEQUAL;
+\=\=		return EQUALEQUAL;
+\<		return LESSER;
+\<\=		return LESSEREQUAL;
+\>		return GREATER;
+\>\=		return GREATEREQUAL;
+
+
 [A-Z][a-z]*.*	insert(yytext);
 
 sin             return SIN;

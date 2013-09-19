@@ -27,6 +27,16 @@
 #define WHILE 282
 #define IF 283
 #define FUNC 284
+#define ELSE 285
+#define THEN 286
+#define OCURLY 287
+#define CCURLY 288
+#define NOTEQUAL 289
+#define EQUALEQUAL 290
+#define LESSER 291
+#define LESSEREQUAL 292
+#define GREATER 293
+#define GREATEREQUAL 294
 
 typedef union YYSTYPE
 { int i; node *n; double d;}
