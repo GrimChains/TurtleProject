@@ -1,0 +1,8 @@
+VAR t;
+
+FOR t=0 STEP 1 TO 5 DO
+//Missing BEGIN
+	JUMP 10;
+END
+
+TURN 20;

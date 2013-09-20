@@ -1,0 +1,18 @@
+VAR t;
+VAR alpha;
+VAR deci;
+
+// Test comment, please ignore
+
+t = sin(cos(sqrt(100)))+7-10/9*50;
+alpha=123;
+
+FOR test=0 STEP 1 TO 3 DO
+BEGIN
+	TURN t;
+	JUMP alpha;
+	GO (t + alpha);
+	t=200 + alpha;
+	alpha=t/10;
+	deci = 8.9 + alpha;
+END
