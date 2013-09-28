@@ -32,7 +32,7 @@
 #define OCURLY 287
 #define CCURLY 288
 #define NOTEQUAL 289
-#define EQUALEQUAL 290
+#define EQUALSEQUALS 290
 #define LESSER 291
 #define LESSEREQUAL 292
 #define GREATER 293

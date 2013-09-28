@@ -27,7 +27,7 @@ THEN		return THEN;
 \{		return OCURLY;
 \}		return CCURLY;
 \!\=		return NOTEQUAL;
-\=\=		return EQUALEQUAL;
+\=\=		return EQUALSEQUALS;
 \<		return LESSER;
 \<\=		return LESSEREQUAL;
 \>		return GREATER;
