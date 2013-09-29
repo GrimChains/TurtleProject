@@ -1,7 +1,7 @@
 
 %{
 #include "symtab.h"
-#include "token.h"
+#include "turtle.tab.h"
 %}
 
 %%
@@ -24,6 +24,21 @@ sin             return SIN;
 cos             return COS;
 sqrt            return SQRT;
 
+WHILE		return WHILE;
+IF		return IF;
+ELSEIF		return ELSEIF;
+ELSE		return ELSE;
+
+\|		return OR;
+\&		return AND;
+
+\=\=		return EQUALS;
+\!\=		return NOTEQUALS;
+\<\=		return LESSEQUALS;
+\>\=		return MOREEQUALS;
+\<		return LESS;
+\>		return MORE;
+
 ;               return SEMICOLON;
 \+              return PLUS;
 -               return MINUS;
@@ -45,3 +60,4 @@ sqrt            return SQRT;
 .               fprintf(stderr,"Unexpected character %c (%2X)\n",yytext[0],yytext[0]);
 
 %%
+

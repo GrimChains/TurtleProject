@@ -1,0 +1,62 @@
+VAR x;
+
+x = 1;
+
+//Demonstrating that the 6 comparison operators work, with variables
+
+WHILE x < 1 DO
+BEGIN
+	x = x + 5;
+END
+
+WHILE x > 1 DO
+BEGIN
+	x = x - 5;
+END
+
+WHILE x <= 1 DO
+BEGIN
+	x = x * 5;
+END
+
+WHILE x >= 1 DO
+BEGIN
+	x = x / 5;
+END
+
+WHILE x == 1 DO
+BEGIN
+	x = 10;
+END
+
+WHILE x != 1 DO
+BEGIN
+	x = 5;
+END
+
+//Demonstrate that variables and constants are position independent
+WHILE 1 != x DO
+BEGIN
+	x = 5;
+END
+
+//Demonstrating the infinite extensability with bool operators (& and |)
+WHILE x != 1 & x < 5 | 9 > 1 | 7 <= x & 7 <= x & 4 == 5 | x == 3 DO
+BEGIN
+	x = 0;
+END
+
+//Demonstrating IF/ELSEIF/ELSE block
+
+IF x == 9 DO
+BEGIN
+	x = 1;
+END
+ELSEIF x == 10 DO
+BEGIN
+	x = 8 * x;
+END
+ELSE DO
+BEGIN
+	x = 0;
+END
