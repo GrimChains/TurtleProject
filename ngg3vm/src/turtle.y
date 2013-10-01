@@ -75,8 +75,9 @@ factor: COS factor { printf("cos ");};
 factor: SQRT factor { printf("sqrt ");};
 factor: atomic;
 
-bool: expr comp expr;
-bool: expr comp expr ops bool;
+bool: COPEN expr comp expr CCLOSE;
+bool: COPEN expr comp expr ops bool;
+bool: expr comp expr CCLOSE;
 
 comp: EQUALS {printf("equals ");};
 comp: NOTEQUALS {printf("notequals ");};
