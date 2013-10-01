@@ -38,8 +38,10 @@ ELSE		return ELSE;
 \>\=		return MOREEQUALS;
 \<		return LESS;
 \>		return MORE;
+\{		return OCURL;
+\}		return CCURL;
 
-;               return SEMICOLON;
+\;               return SEMICOLON;
 \+              return PLUS;
 -               return MINUS;
 \*              return TIMES;

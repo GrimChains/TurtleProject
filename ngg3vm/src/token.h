@@ -36,6 +36,8 @@
 #define IF 289
 #define ELSEIF 290
 #define ELSE 291
+#define OCURL 292
+#define OCURL 293
 
 typedef union YYSTYPE
 { int i; node *n; double d;}
