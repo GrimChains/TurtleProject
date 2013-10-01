@@ -87,16 +87,6 @@ bool: OPEN expr LESS expr CLOSE {printf("lt\n");};
 curl: OCURL {printf("");};
 curl: CCURL {printf("} ");};
 
-comp: EQUALS {printf("eq\n");};
-comp: NOTEQUALS {printf("ne\n");};
-comp: LESSEQUALS {printf("le\n");};
-comp: MOREEQUALS {printf("ge\n");};
-comp: LESS {printf("lt\n");};
-comp: MORE {printf("gt\n");};
-
-ops: OR {printf("or ");};
-ops: AND {printf("and ");};
-
 atomic: OPEN expr CLOSE;
 atomic: NUMBER {printf("%d ",$1);};
 atomic: FLOAT {printf("%f ",$1);};
