@@ -1,0 +1,48 @@
+VAR x;
+
+// There is no check for hard-coding a divide by zero
+x = 1/0;
+
+x = 1;
+
+// Testing if/else block and if empty blocks cause an issue
+IF (x == 1) THEN {
+}ELSE {
+}
+
+// Testing bool operators
+IF (x == 1) THEN {
+	GO 1;
+}
+IF (x != 1) THEN {
+	GO 2;
+}
+IF (x <= 1) THEN {
+	GO 3;
+}
+IF (x >= 1) THEN {
+	GO 4;
+}
+IF (x > 1) THEN {
+	GO 5;
+}
+IF (x < 1) THEN {
+	GO 6;
+}
+
+// Testing expression evaluations
+IF ( 2 + 3 - 4 * 7 - (8 / 4 + 8) == (x + 4 / x * 7)) THEN {
+	GO 7;
+}
+
+// Testing numeric operations
+x = 1 + 2 - 3 * 4 / 5 + sin cos sqrt 10 / 8;
+
+// Testing while loop
+WHILE (x != 1) {
+	x = x - 1;
+}
+
+// Testing empty while loop
+WHILE (x != 0) {
+}
