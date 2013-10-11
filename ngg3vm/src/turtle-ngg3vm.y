@@ -37,7 +37,7 @@ tail: { printf("stroke\n"); };
 decllist: ;
 decllist: decllist decl;
 
-decl: VAR ID SEMICOLON { printf("/tlt%s 0 def\n",$2->symbol);} ;
+decl: VAR ID SEMICOLON {if (strlen($2->symbol) > 1020) { yyerror(("Variable is too big"));} else { printf("/tlt%s 0 def\n",$2->symbol);}} ;
 
 
 stmtlist: ;
@@ -58,15 +58,17 @@ stmt: FOR ID ASSIGN expr
           STEP expr
 	  TO expr
 	  DO {printf("{ /tlt%s exch store\n",$2->symbol);} 
-	     stmt {printf("} for\n");};
+	     block {printf("} for\n");};
 
-stmt: COPEN stmtlist CCLOSE;	 
+block: COPEN stmtlist CCLOSE;
+block: stmt;
 
 expr: expr PLUS term { printf("add ");};
 expr: expr MINUS term { printf("sub ");};
 expr: term;
 
 term: term TIMES factor { printf("mul ");};
+term: term DIV NUMBER {if ($3 == 0) {yyerror("Cannot divide by zero.");} else { printf("%f div\n"); }};
 term: term DIV factor { printf("div ");};
 term: factor;
 
