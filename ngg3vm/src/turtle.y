@@ -67,6 +67,7 @@ expr: expr MINUS term { printf("sub ");};
 expr: term;
 
 term: term TIMES factor { printf("mul ");};
+term: term DIV NUMBER {if ($3 == 0) {yyerror("Cannot divide by zero.");} else { printf("%f div\n"); }};
 term: term DIV factor { printf("div ");};
 term: factor;
 
