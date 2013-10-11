@@ -37,7 +37,7 @@ tail: { printf("stroke\n"); };
 decllist: ;
 decllist: decllist decl;
 
-decl: VAR ID SEMICOLON { printf("/tlt%s 0 def\n",$2->symbol);} ;
+decl: VAR ID SEMICOLON {if (strlen($2->symbol) > 1020) { yyerror(("Variable is too big"));} else { printf("/tlt%s 0 def\n",$2->symbol);}} ;
 
 
 stmtlist: ;
