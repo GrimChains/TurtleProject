@@ -58,9 +58,10 @@ stmt: FOR ID ASSIGN expr
           STEP expr
 	  TO expr
 	  DO {printf("{ /tlt%s exch store\n",$2->symbol);} 
-	     stmt {printf("} for\n");};
+	     block {printf("} for\n");};
 
-stmt: COPEN stmtlist CCLOSE;	 
+block: COPEN stmtlist CCLOSE;
+block: stmt;
 
 expr: expr PLUS term { printf("add ");};
 expr: expr MINUS term { printf("sub ");};
