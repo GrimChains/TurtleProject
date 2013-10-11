@@ -1,0 +1,3 @@
+BEGIN
+GO 10;
+END
