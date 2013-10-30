@@ -63,6 +63,14 @@ CompoundExpr::CompoundExpr(Operator *o, Expr *r)
     (right=r)->SetParent(this);
 }
 
+CompoundExpr::CompoundExpr(Expr *l, Operator *o)
+  : Expr(Join(o->GetLocation(), l->GetLocation())) {
+	Assert(l != NULL && o != NULL);
+	(left=l)->SetParent(this);
+	(op=o)->SetParent(this);
+	right = NULL;
+}
+
 void CompoundExpr::PrintChildren(int indentLevel) {
    if (left) left->Print(indentLevel+1);
    op->Print(indentLevel+1);

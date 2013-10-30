@@ -109,12 +109,17 @@ SINGLE_COMMENT    ("//"[^\n]*)
 "<="                { return T_LessEqual;   }
 ">="                { return T_GreaterEqual;}
 "=="                { return T_Equal;       }
+">"		    { return T_Greater;	    }
+"<"		    { return T_Less;	    }
 "!="                { return T_NotEqual;    }
 "&&"                { return T_And;         }
 "||"                { return T_Or;          }
 {OPERATOR}          { return yytext[0];     }
     
 "[]"                { return T_Dims;        }
+"++"		    { return T_Postfix;	    }
+"--"		    { return T_Postfix;     }
+"!"		    { return T_Not;	    }
 
  /* -------------------- Constants ------------------------------ */
 "true"|"false"      { yylval.boolConstant = (yytext[0] == 't');

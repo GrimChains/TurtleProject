@@ -127,5 +127,4 @@ class PrintStmt : public Stmt
     void PrintChildren(int indentLevel);
 };
 
-
 #endif
