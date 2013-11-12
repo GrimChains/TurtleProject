@@ -1,7 +1,8 @@
-/* File: list.h
+/**
+ * File: list.h
  * ------------
  * Simple list class for storing a linear collection of elements. It
- * supports operations similar in name to the CS107 DArray -- nth, insert,
+ * supports operations similar in name to the CS107 CVector -- nth, insert,
  * append, remove, etc.  This class is nothing more than a very thin
  * cover of a STL deque, with some added range-checking. Given not everyone
  * is familiar with the C++ templates, this class provides a more familiar
@@ -14,8 +15,7 @@
  *
  * Here is some sample code illustrating the usage of a List of integers
  *
- *   int Sum(List<int> *list)
- *   {
+ *   int Sum(List<int> *list) {
  *       int sum = 0;
  *       for (int i = 0; i < list->NumElements(); i++) {
  *          int val = list->Nth(i);
@@ -30,14 +30,14 @@
 
 #include <deque>
 #include "utility.h"  // for Assert()
-#include "scope.h"
-  
+using namespace std;
+
 class Node;
 
 template<class Element> class List {
 
  private:
-    std::deque<Element> elems;
+    deque<Element> elems;
 
  public:
            // Create a new empty list
@@ -77,13 +77,6 @@ template<class Element> class List {
     void SetParentAll(Node *p)
         { for (int i = 0; i < NumElements(); i++)
              Nth(i)->SetParent(p); }
-    void DeclareAll(Scope *s)
-        { for (int i = 0; i < NumElements(); i++)
-             s->Declare(Nth(i)); }
-
-   void CheckAll()
-        { for (int i = 0; i < NumElements(); i++)
-             Nth(i)->Check(); }
 
 };
 

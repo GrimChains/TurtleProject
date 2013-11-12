@@ -11,12 +11,13 @@
  * otherwise it just adds another entry under same key. Copies the
  * key, so you don't have to worry about its allocation.
  */
-template <class Value> void Hashtable<Value>::Enter(const char *key, Value val, bool overwrite)
+template <class Value> 
+void Hashtable<Value>::Enter(const char *key, Value val, bool overwrite)
 {
   Value prev;
   if (overwrite && (prev = Lookup(key)))
     Remove(key, prev);
-  mmap.insert(std::make_pair(strdup(key), val));
+  mmap.insert(make_pair(strdup(key), val));
 }
 
  
@@ -30,7 +31,7 @@ template <class Value> void Hashtable<Value>::Remove(const char *key, Value val)
   if (mmap.count(key) == 0) // no matches at all
     return;
 
-  typename std::multimap<const char *, Value>::iterator itr;
+  typename multimap<const char *, Value>::iterator itr;
   itr = mmap.find(key); // start at first occurrence
   while (itr != mmap.upper_bound(key)) {
     if (itr->second == val) { // iterate to find matching pair
@@ -41,18 +42,18 @@ template <class Value> void Hashtable<Value>::Remove(const char *key, Value val)
   }
 } 
 
-
 /* Hashtable::Lookup
  * -----------------
  * Returns the value earlier stored under key or NULL
  *if there is no matching entry
  */
-template <class Value> Value Hashtable<Value>::Lookup(const char *key) 
+template <class Value> 
+Value Hashtable<Value>::Lookup(const char *key) 
 {
   Value found = NULL;
   
   if (mmap.count(key) > 0) {
-    typename std::multimap<const char *, Value>::iterator cur, last, prev;
+    typename multimap<const char *, Value>::iterator cur, last, prev;
     cur = mmap.find(key); // start at first occurrence
     last = mmap.upper_bound(key);
     while (cur != last) { // iterate to find last entered
@@ -70,18 +71,19 @@ template <class Value> Value Hashtable<Value>::Lookup(const char *key)
 /* Hashtable::NumEntries
  * ---------------------
  */
-template <class Value> int Hashtable<Value>::NumEntries() const
+template <class Value> 
+int Hashtable<Value>::NumEntries() const
 {
   return mmap.size();
 }
-
 
 
 /* Hashtable:GetIterator
  * ---------------------
  * Returns iterator which can be used to walk through all values in table.
  */
-template <class Value> Iterator<Value> Hashtable<Value>::GetIterator() 
+template <class Value> 
+Iterator<Value> Hashtable<Value>::GetIterator() 
 {
   return Iterator<Value>(mmap);
 }
@@ -92,8 +94,10 @@ template <class Value> Iterator<Value> Hashtable<Value>::GetIterator()
  * Iterator method used to return current value and advance iterator
  * to next entry. Returns null if no more values exist.
  */
-template <class Value> Value Iterator<Value>::GetNextValue()
+template <class Value> 
+Value Iterator<Value>::GetNextValue()
 {
   return (cur == end ? NULL : (*cur++).second);
 }
+
 
