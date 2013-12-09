@@ -2,11 +2,11 @@
  * -----------------
  * Implementation of type node classes.
  */
+
+#include <string.h>
 #include "ast_type.h"
 #include "ast_decl.h"
-#include <string.h>
 
- 
 /* Class constants
  * ---------------
  * These are public constants for the built-in base types (int, double, etc.)
@@ -28,18 +28,36 @@ Type::Type(const char *n) {
     typeName = strdup(n);
 }
 
+BuiltIn Type::GetPrint() {
+    if (IsEquivalentTo(Type::intType))
+        return PrintInt;
+    else if (IsEquivalentTo(Type::stringType))
+        return PrintString;
+    else if (IsEquivalentTo(Type::boolType))
+        return PrintBool;
 
+    return NumBuiltIns;
+}
 
-	
 NamedType::NamedType(Identifier *i) : Type(*i->GetLocation()) {
     Assert(i != NULL);
     (id=i)->SetParent(this);
-} 
+}
 
+BuiltIn NamedType::GetPrint() {
+    return NumBuiltIns;
+}
 
 ArrayType::ArrayType(yyltype loc, Type *et) : Type(loc) {
     Assert(et != NULL);
     (elemType=et)->SetParent(this);
 }
 
+ArrayType::ArrayType(Type *et) : Type() {
+    Assert(et != NULL);
+    (elemType=et)->SetParent(this);
+}
 
+BuiltIn ArrayType::GetPrint() {
+    return elemType->GetPrint();
+}

@@ -35,19 +35,20 @@
 
 #include <map>
 #include <string.h>
-
+using namespace std;
+    
 struct ltstr {
   bool operator()(const char* s1, const char* s2) const
   { return strcmp(s1, s2) < 0; }
 };
 
 
-template <class Value> class Iterator;
-
+template <class Value> class Iterator; 
+ 
 template<class Value> class Hashtable {
 
   private: 
-     std::multimap<const char*, Value, ltstr> mmap;
+     multimap<const char*, Value, ltstr> mmap;
  
    public:
             // ctor creates a new empty hashtable
@@ -87,14 +88,16 @@ template<class Value> class Hashtable {
  * sample usage above for how to iterate over a hashtable using an
  * iterator.
  */
-template<class Value> class Iterator {
+template <class Value> 
+class Iterator {
+
   friend class Hashtable<Value>;
 
   private:
-    typename std::multimap<const char*, Value , ltstr>::iterator cur, end;
-    Iterator(std::multimap<const char*, Value, ltstr>& t)
-      : cur(t.begin()), end(t.end()) {}
-
+    typename multimap<const char*, Value , ltstr>::iterator cur, end;
+    Iterator(multimap<const char*, Value, ltstr>& t)
+	: cur(t.begin()), end(t.end()) {}
+	 
   public:
          // Returns current value and advances iterator to next.
          // Returns NULL when there are no more values in table
@@ -106,3 +109,4 @@ template<class Value> class Iterator {
 #include "hashtable.cc" // icky, but allows implicit template instantiation
 
 #endif
+

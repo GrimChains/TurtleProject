@@ -6,14 +6,14 @@
 
 #include "utility.h"
 #include <stdarg.h>
-#include "list.h"
 #include <string.h>
+#include <vector>
+using std::vector;
 
-static List<const char*> debugKeys;
+static vector<const char*> debugKeys;
 static const int BufferSize = 2048;
 
-void Failure(const char *format, ...)
-{
+void Failure(const char *format, ...) {
   va_list args;
   char errbuf[BufferSize];
   
@@ -25,34 +25,27 @@ void Failure(const char *format, ...)
   abort();
 }
 
+int IndexOf(const char *key) {
+  for (unsigned int i = 0; i < debugKeys.size(); i++)
+    if (!strcmp(debugKeys[i], key)) 
+      return i;
 
-
-int IndexOf(const char *key)
-{
-   for (int i = 0; i < debugKeys.NumElements(); i++)
-      if (!strcmp(debugKeys.Nth(i), key)) return i;
-   return -1;
+  return -1;
 }
 
-bool IsDebugOn(const char *key)
-{
-   return (IndexOf(key) != -1);
+bool IsDebugOn(const char *key) {
+  return (IndexOf(key) != -1);
 }
 
-
-void SetDebugForKey(const char *key, bool value)
-{
+void SetDebugForKey(const char *key, bool value) {
   int k = IndexOf(key);
   if (!value && k != -1)
-    debugKeys.RemoveAt(k);
+    debugKeys.erase(debugKeys.begin() + k);
   else if (value && k == -1)
-    debugKeys.Append(key);
+    debugKeys.push_back(key);
 }
 
-
-
-void PrintDebug(const char *key, const char *format, ...)
-{
+void PrintDebug(const char *key, const char *format, ...) {
   va_list args;
   char buf[BufferSize];
 
@@ -65,14 +58,15 @@ void PrintDebug(const char *key, const char *format, ...)
   printf("+++ (%s): %s%s", key, buf, buf[strlen(buf)-1] != '\n'? "\n" : "");
 }
 
-
-void ParseCommandLine(int argc, char *argv[])
-{
+void ParseCommandLine(int argc, char *argv[]) {
   if (argc == 1)
     return;
   
   if (strcmp(argv[1], "-d") != 0) { // first arg is not -d
-    printf("Usage:   -d <debug-key-1> <debug-key-2> ... \n");
+    printf("Incorrect Use:   ");
+    for (int i = 1; i < argc; i++) printf("%s ", argv[i]);
+    printf("\n");
+    printf("Correct Usage:   -d <debug-key-1> <debug-key-2> ... \n");
     exit(2);
   }
 

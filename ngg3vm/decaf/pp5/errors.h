@@ -1,4 +1,5 @@
-/* File: errors.h
+/**
+ * File: errors.h
  * --------------
  * This file defines an error-reporting class with a set of already
  * implemented static methods for reporting the standard Decaf errors.
@@ -9,12 +10,12 @@
  * part, you will just use the class as given.
  */
 
-#ifndef _H_errors
-#define _H_errors
+#ifndef _errors_h_
+#define _errors_h_
 
 #include <string>
-using std::string;
 #include "location.h"
+using namespace std;
 class Type;
 class Identifier;
 class Expr;
@@ -24,7 +25,8 @@ class This;
 class Decl;
 class Operator;
 
-/* General notes on using this class
+/**
+ * General notes on using this class
  * ----------------------------------
  * Each of the methods in thie class matches one of the standard Decaf
  * errors and reports a specific problem such as an unterminated string,
@@ -33,7 +35,9 @@ class Operator;
  * on this class are static, thus you can invoke methods directly via
  * the class name, e.g.
  *
- *    if (missingEnd) ReportError::UntermString(&yylloc, str);
+ *    if (missingEnd) { 
+ *       ReportError::UntermString(&yylloc, str);
+ *    }
  *
  * For some methods, the first argument is the pointer to the location
  * structure that identifies where the problem is (usually this is the
@@ -43,19 +47,13 @@ class Operator;
  * as an argument. You cannot pass NULL for these arguments.
  */
 
-
 typedef enum {LookingForType, LookingForClass, LookingForInterface, LookingForVariable, LookingForFunction} reasonT;
 
-class ReportError
-{
+class ReportError {
  public:
 
-  // Errors used by preprocessor
-  static void UntermComment();
-  static void InvalidDirective(int linenum);
-
-
   // Errors used by scanner
+  static void UntermComment(); 
   static void LongIdentifier(yyltype *loc, const char *ident);
   static void UntermString(yyltype *loc, const char *str);
   static void UnrecogChar(yyltype *loc, char ch);
@@ -111,16 +109,13 @@ class ReportError
   static int NumErrors() { return numErrors; }
   
  private:
-
   static void UnderlineErrorInLine(const char *line, yyltype *pos);
   static void OutputError(yyltype *loc, string msg);
   static int numErrors;
-  
 };
-
   
 // Wording to use for runtime error messages
-static const char *err_arr_out_of_bounds = "Decaf runtime error: Array subscript out of bounds\\n";
-static const char *err_arr_bad_size = "Decaf runtime error: Array size is <= 0\\n";
+static const char * const err_arr_out_of_bounds = "Decaf runtime error: Array subscript out of bounds\\n";
+static const char * const err_arr_bad_size = "Decaf runtime error: Array size is <= 0\\n";
  
 #endif

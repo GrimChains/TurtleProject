@@ -1,6 +1,6 @@
 /* File:  scanner.l
  * ----------------
- * Lex inupt file to generate the scanner for the compiler.
+ * Lex input file to generate the scanner for the compiler.
  */
 
 %{
@@ -10,7 +10,8 @@
 #include "utility.h" // for PrintDebug()
 #include "errors.h"
 #include "parser.h" // for token codes, yylval
-#include "list.h"
+#include <vector>
+using namespace std;
 
 #define TAB_SIZE 8
 
@@ -20,7 +21,7 @@
  * preserved between calls to yylex or used outside the scanner.
  */
 static int curLineNum, curColNum;
-List<const char*> savedLines;
+vector<const char*> savedLines;
 
 static void DoBeforeEachAction(); 
 #define YY_USER_ACTION DoBeforeEachAction();
@@ -60,11 +61,11 @@ SINGLE_COMMENT    ("//"[^\n]*)
 
 <COPY>.*               { char curLine[512];
                          //strncpy(curLine, yytext, sizeof(curLine));
-                         savedLines.Append(strdup(yytext));
+                         savedLines.push_back(strdup(yytext));
                          curColNum = 1; yy_pop_state(); yyless(0); }
 <COPY><<EOF>>          { yy_pop_state(); }
 <*>\n                  { curLineNum++; curColNum = 1;
-                         if (YYSTATE == COPY) savedLines.Append("");
+                         if (YYSTATE == COPY) savedLines.push_back("");
                          else yy_push_state(COPY); }
 
 [ ]+                   { /* ignore all spaces */  }
@@ -112,9 +113,8 @@ SINGLE_COMMENT    ("//"[^\n]*)
 "!="                { return T_NotEqual;    }
 "&&"                { return T_And;         }
 "||"                { return T_Or;          }
-{OPERATOR}          { return yytext[0];     }
-    
 "[]"                { return T_Dims;        }
+{OPERATOR}          { return yytext[0];     }
 
  /* -------------------- Constants ------------------------------ */
 "true"|"false"      { yylval.boolConstant = (yytext[0] == 't');
@@ -190,8 +190,8 @@ static void DoBeforeEachAction()
  * retrieve them to report the context for errors.
  */
 const char *GetLineNumbered(int num) {
-   if (num <= 0 || num > savedLines.NumElements()) return NULL;
-   return savedLines.Nth(num-1); 
+   if (num <= 0 || num > savedLines.size()) return NULL;
+   return savedLines[num-1]; 
 }
 
 

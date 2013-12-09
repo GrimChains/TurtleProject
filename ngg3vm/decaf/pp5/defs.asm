@@ -131,12 +131,19 @@ _ReadLine:
 	sw $ra, 4($sp)        # save ra
 	addiu $fp, $sp, 8     # set up new fp
 	subu $sp, $sp, 4      # decrement sp to make space for locals/temps
-	li $a1, 40
-	la $a0, SPACE
-	li $v0, 8
+	# allocate space to store memory
+	li $a0, 128           # request 128 bytes
+	li $v0, 9	      # syscall "sbrk" for memory allocation
+	syscall               # do the system call
+	# read in the new line
+	li $a1, 128	      # size of the buffer
+	#la $a0, SPACE        
+	move $a0, $v0	      # location of the buffer	
+	li $v0, 8 
 	syscall
 
-	la $t1, SPACE
+	#la $t1, SPACE  
+	move $t1, $a0
 bloop4: 
 	lb $t5, ($t1) 
 	beqz $t5, eloop4	
@@ -145,9 +152,10 @@ bloop4:
 eloop4:
 	addi $t1,-1
 	li $t6,0
-        sb $t6, ($t1)
+	sb $t6, ($t1)
 
-	la $v0, SPACE
+	#la $v0, SPACE
+	move $v0, $a0	      # save buffer location to v0 as return value	
 	move $sp, $fp         # pop callee frame off stack
 	lw $ra, -4($fp)       # restore saved ra
 	lw $fp, 0($fp)        # restore saved fp

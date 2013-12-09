@@ -9,11 +9,13 @@
 #include <string.h>
 #include "tac.h"
 #include "mips.h"
+#include "errors.h"
 
-Location* CodeGenerator::ThisPtr= new Location(fpRelative, 4, "this");
-  
 CodeGenerator::CodeGenerator()
 {
+  code = new List<Instruction*>();
+  localOffset = OffsetToFirstLocal;
+  mainDefined = false;
 }
 
 char *CodeGenerator::NewLabel()
@@ -24,132 +26,134 @@ char *CodeGenerator::NewLabel()
   return strdup(temp);
 }
 
-
 Location *CodeGenerator::GenTempVar()
 {
   static int nextTempNum;
   char temp[10];
   Location *result = NULL;
   sprintf(temp, "_tmp%d", nextTempNum++);
-  /* pp5: need to create variable in proper location
-     in stack frame for use as temporary. Until you
-     do that, the assert below will always fail to remind
-     you this needs to be implemented  */
+  result = new Location(fpRelative, localOffset, temp);
+  localOffset -= VarSize;
+
   Assert(result != NULL);
   return result;
 }
 
- 
+Location *CodeGenerator::GenLocalVar(const char *name, int size)
+{
+    Location *result = new Location(fpRelative, localOffset, name);
+    localOffset -= size;
+    return result;
+}
+
 Location *CodeGenerator::GenLoadConstant(int value)
 {
   Location *result = GenTempVar();
-  code.push_back(new LoadConstant(result, value));
+  code->Append(new LoadConstant(result, value));
   return result;
 }
 
 Location *CodeGenerator::GenLoadConstant(const char *s)
 {
   Location *result = GenTempVar();
-  code.push_back(new LoadStringConstant(result, s));
+  code->Append(new LoadStringConstant(result, s));
   return result;
-} 
+}
 
 Location *CodeGenerator::GenLoadLabel(const char *label)
 {
   Location *result = GenTempVar();
-  code.push_back(new LoadLabel(result, label));
+  code->Append(new LoadLabel(result, label));
   return result;
-} 
-
+}
 
 void CodeGenerator::GenAssign(Location *dst, Location *src)
 {
-  code.push_back(new Assign(dst, src));
+  code->Append(new Assign(dst, src));
 }
-
 
 Location *CodeGenerator::GenLoad(Location *ref, int offset)
 {
   Location *result = GenTempVar();
-  code.push_back(new Load(result, ref, offset));
+  code->Append(new Load(result, ref, offset));
   return result;
 }
 
 void CodeGenerator::GenStore(Location *dst,Location *src, int offset)
 {
-  code.push_back(new Store(dst, src, offset));
+  code->Append(new Store(dst, src, offset));
 }
-
 
 Location *CodeGenerator::GenBinaryOp(const char *opName, Location *op1,
 						     Location *op2)
 {
   Location *result = GenTempVar();
-  code.push_back(new BinaryOp(BinaryOp::OpCodeForName(opName), result, op1, op2));
+  code->Append(new BinaryOp(BinaryOp::OpCodeForName(opName), result, op1, op2));
   return result;
 }
 
-
 void CodeGenerator::GenLabel(const char *label)
 {
-  code.push_back(new Label(label));
+  if (strcmp(label, "main") == 0)
+    mainDefined = true;
+
+  code->Append(new Label(label));
 }
 
 void CodeGenerator::GenIfZ(Location *test, const char *label)
 {
-  code.push_back(new IfZ(test, label));
+  code->Append(new IfZ(test, label));
 }
 
 void CodeGenerator::GenGoto(const char *label)
 {
-  code.push_back(new Goto(label));
+  code->Append(new Goto(label));
 }
 
 void CodeGenerator::GenReturn(Location *val)
 {
-  code.push_back(new Return(val));
+  code->Append(new Return(val));
 }
-
 
 BeginFunc *CodeGenerator::GenBeginFunc()
 {
+  localOffset = OffsetToFirstLocal;
   BeginFunc *result = new BeginFunc;
-  code.push_back(result);
+  code->Append(result);
   return result;
 }
 
 void CodeGenerator::GenEndFunc()
 {
-  code.push_back(new EndFunc());
+  code->Append(new EndFunc());
 }
 
 void CodeGenerator::GenPushParam(Location *param)
 {
-  code.push_back(new PushParam(param));
+  code->Append(new PushParam(param));
 }
 
 void CodeGenerator::GenPopParams(int numBytesOfParams)
 {
   Assert(numBytesOfParams >= 0 && numBytesOfParams % VarSize == 0); // sanity check
   if (numBytesOfParams > 0)
-    code.push_back(new PopParams(numBytesOfParams));
+    code->Append(new PopParams(numBytesOfParams));
 }
 
 Location *CodeGenerator::GenLCall(const char *label, bool fnHasReturnValue)
 {
   Location *result = fnHasReturnValue ? GenTempVar() : NULL;
-  code.push_back(new LCall(label, result));
+  code->Append(new LCall(label, result));
   return result;
 }
 
 Location *CodeGenerator::GenACall(Location *fnAddr, bool fnHasReturnValue)
 {
   Location *result = fnHasReturnValue ? GenTempVar() : NULL;
-  code.push_back(new ACall(fnAddr, result));
+  code->Append(new ACall(fnAddr, result));
   return result;
 }
- 
- 
+
 static struct _builtin {
   const char *label;
   int numArgs;
@@ -175,36 +179,30 @@ Location *CodeGenerator::GenBuiltInCall(BuiltIn bn,Location *arg1, Location *arg
   Assert((b->numArgs == 0 && !arg1 && !arg2)
 	|| (b->numArgs == 1 && arg1 && !arg2)
 	|| (b->numArgs == 2 && arg1 && arg2));
-  if (arg2) code.push_back(new PushParam(arg2));
-  if (arg1) code.push_back(new PushParam(arg1));
-  code.push_back(new LCall(b->label, result));
+  if (arg2) code->Append(new PushParam(arg2));
+  if (arg1) code->Append(new PushParam(arg1));
+  code->Append(new LCall(b->label, result));
   GenPopParams(VarSize*b->numArgs);
   return result;
 }
 
-
 void CodeGenerator::GenVTable(const char *className, List<const char *> *methodLabels)
 {
-  code.push_back(new VTable(className, methodLabels));
+  code->Append(new VTable(className, methodLabels));
 }
-
 
 void CodeGenerator::DoFinalCodeGen()
 {
+  if (!mainDefined)
+    ReportError::NoMainFound();
+
   if (IsDebugOn("tac")) { // if debug don't translate to mips, just print Tac
-    std::list<Instruction*>::iterator p;
-    for (p= code.begin(); p != code.end(); ++p) {
-      (*p)->Print();
-    }
+    for (int i = 0; i < code->NumElements(); i++)
+	code->Nth(i)->Print();
    }  else {
      Mips mips;
      mips.EmitPreamble();
-
-    std::list<Instruction*>::iterator p;
-    for (p= code.begin(); p != code.end(); ++p) {
-      (*p)->Emit(&mips);
-    }
+     for (int i = 0; i < code->NumElements(); i++)
+	 code->Nth(i)->Emit(&mips);
   }
 }
-
-
